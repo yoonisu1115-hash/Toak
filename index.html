@@ -42,9 +42,11 @@
     function join() {
   location.href = '/join';
   }
-  function isImage(url) {
-  return url.match(/\.(jpg|jpeg|png|gif|webp)$/i);
-  }   
+function isImage(url) {
+  if (!url) return false;
+  if (!url.startsWith('http')) return false; // 🔥 이거 추가
+  return /\.(jpg|jpeg|png|gif|webp)$/i.test(url);
+}
 
   async function loadUser() {
     const res = await fetch('/me', {
@@ -75,31 +77,56 @@
     const ul = document.getElementById('chat');
     ul.innerHTML = '';
 
-    data.forEach(m => {
-    const li = document.createElement('li');
-    li.classList.add('msg');
 
-    if (m.id === currentUser) {
-    li.classList.add('me');
-    } else {
-    li.classList.add('other');
-    }
-      if (isImage(m.text)) {
-  li.innerHTML = `
-    <div class="name">${DOMPurify.sanitize(m.id)}</div>
-    <img src="${m.text}" class="chat-img">
-    <div class="time">${DOMPurify.sanitize(m.time)}</div>
-  `;
-} else {
-  li.innerHTML = `
-    <div class="name">${DOMPurify.sanitize(m.id)}</div>
-    <div class="text">${DOMPurify.sanitize(m.text)}</div>
-    <div class="time">${DOMPurify.sanitize(m.time)}</div>
-  `;
+function fixUrl(url) {
+  if (!url) return '';
+  if (!url.startsWith('http')) return 'https://' + url;
+  return url;
 }
 
-      ul.appendChild(li);
-    });
+
+
+data.forEach(m => {
+  const li = document.createElement('li');
+
+  if (m.image) {
+    li.innerHTML = `
+      <div class="name">${DOMPurify.sanitize(m.id)}</div>
+      <img src="${m.image}" class="chat-img">
+      <div class="time">${DOMPurify.sanitize(m.time)}</div>
+    `;
+    const isMe = m.id === currentUser;
+
+li.classList.add('msg');
+li.classList.add(isMe ? 'me' : 'other');
+  } else if (isImage(m.text)) {
+  const url = fixUrl(m.text);
+
+  if (!url.startsWith('http')) return; // 🔥 안전장치
+
+  li.innerHTML = `
+    <div class="name">${DOMPurify.sanitize(m.id)}</div>
+    <img src="${url}" class="chat-img">
+    <div class="time">${DOMPurify.sanitize(m.time)}</div>
+  `;
+  const isMe = m.id === currentUser;
+
+li.classList.add('msg');
+li.classList.add(isMe ? 'me' : 'other');
+} else {
+    li.innerHTML = `
+      <div class="name">${DOMPurify.sanitize(m.id)}</div>
+      <div class="text">${DOMPurify.sanitize(m.text)}</div>
+      <div class="time">${DOMPurify.sanitize(m.time)}</div>
+    `;
+    const isMe = m.id === currentUser;
+
+li.classList.add('msg');
+li.classList.add(isMe ? 'me' : 'other');
+  }
+
+  ul.appendChild(li);
+});
     const box = document.getElementById('chat-box');
 
     if (autoScrollEnabled && wasAtBottom) {
