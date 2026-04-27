@@ -2,3 +2,4 @@ node_modules
 uploads
 session
 .env
+chat.json
