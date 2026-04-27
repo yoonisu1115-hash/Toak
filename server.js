@@ -4,6 +4,8 @@ const bcrypt = require('bcrypt');
 const fs = require('fs');
 const session = require('express-session');
 const multer = require('multer');
+const path = require('path');
+const filePath = path.join(__dirname, 'chat.json');
 
 // 🔥 uploads 폴더 자동 생성
 if (!fs.existsSync('uploads')) {
@@ -146,7 +148,7 @@ app.post('/chat', (req, res) => {
   let json;
 
   try {
-    const data = fs.readFileSync('chat.json', 'utf-8');
+    const data = fs.readFileSync(filePath, 'utf-8');
     json = JSON.parse(data);
   } catch (e) {
     json = { messages: [] };
@@ -160,7 +162,7 @@ app.post('/chat', (req, res) => {
     time: new Date().toISOString() // 🔥 이것 추천
   });
 
-  fs.writeFileSync('chat.json', JSON.stringify(json, null, 2));
+  fs.writeFileSync(filePath, JSON.stringify(json, null, 2));
 
   res.send("ok");
 });
