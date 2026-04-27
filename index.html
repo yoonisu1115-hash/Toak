@@ -84,6 +84,23 @@ function fixUrl(url) {
   return url;
 }
 
+function formatTime(time) {
+  if (!time) return '';
+
+  const date = new Date(time);
+
+  if (isNaN(date.getTime())) {
+    return time; // 이미 문자열이면 그대로
+  }
+
+  return date.toLocaleTimeString('ko-KR', {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    timeZone: 'Asia/Seoul'
+  });
+}
+
 
 
 data.forEach(m => {
@@ -93,7 +110,7 @@ data.forEach(m => {
     li.innerHTML = `
       <div class="name">${DOMPurify.sanitize(m.id)}</div>
       <img src="${m.image}" class="chat-img">
-      <div class="time">${DOMPurify.sanitize(m.time)}</div>
+      <div class="time">${DOMPurify.sanitize(formatTime(m.time))}</div>
     `;
     const isMe = m.id === currentUser;
 
@@ -107,7 +124,7 @@ li.classList.add(isMe ? 'me' : 'other');
   li.innerHTML = `
     <div class="name">${DOMPurify.sanitize(m.id)}</div>
     <img src="${url}" class="chat-img">
-    <div class="time">${DOMPurify.sanitize(m.time)}</div>
+    <div class="time">${DOMPurify.sanitize(formatTime(m.time))}</div>
   `;
   const isMe = m.id === currentUser;
 
@@ -117,7 +134,7 @@ li.classList.add(isMe ? 'me' : 'other');
     li.innerHTML = `
       <div class="name">${DOMPurify.sanitize(m.id)}</div>
       <div class="text">${DOMPurify.sanitize(m.text)}</div>
-      <div class="time">${DOMPurify.sanitize(m.time)}</div>
+      <div class="time">${DOMPurify.sanitize(formatTime(m.time))}</div>
     `;
     const isMe = m.id === currentUser;
 
