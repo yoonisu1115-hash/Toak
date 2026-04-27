@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>토옥</title>
+</head>
+
+<body>
+  <h1>토옥</h1>
+  <h4 id="welcome">loading...</h4>
+  <h4>친구들과 함께 토옥~ 이야기 해보세요.</h4>
+
+  <div id="chat-box">
+    <ul id="chat"></ul>
+  </div>
+
+  <input id="msg" placeholder="메시지 입력">
+  <button onclick="send()">전송</button><input type="file" id="img">
+<button onclick="sendImage()">이미지</button><br>
+  <button onclick="login()">로그인</button>
+  <button onclick="logout()">로그아웃</button>
+  <button onclick="join()">회원가입</button>
+
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
+<script>
+  let autoScrollEnabled = true;
+  let currentUser = null;
+  let isProgrammaticScroll = false;
+
+  function isAtBottom() {
+    const box = document.getElementById('chat-box');
+    return box.scrollHeight - box.scrollTop <= box.clientHeight + 10;
+  }
+  function logout() {
+  location.href = '/logout';
+  }
+    function login() {
+  location.href = '/login';
+  }
+    function join() {
+  location.href = '/join';
+  }
+
+  async function loadUser() {
+    const res = await fetch('/me', {
+      credentials: 'same-origin'
+    });
+
+    const data = await res.json();
+
+    currentUser = data.id;
+    if (data.id) {
+      document.getElementById('welcome').innerText =
+        data.id + "님 환영합니다";
+    } else {
+      document.getElementById('welcome').innerText =
+        "로그인 안됨";
+    }
+  }
+
+  async function loadChat() {
+    const wasAtBottom = isAtBottom();
+
+    const res = await fetch('/chat', {
+      credentials: 'same-origin'
+    });
+
+    const data = await res.json();
+
+    const ul = document.getElementById('chat');
+    ul.innerHTML = '';
+
+    data.forEach(m => {
+    const li = document.createElement('li');
+    li.classList.add('msg');
+
+    if (m.id === currentUser) {
+    li.classList.add('me');
+    } else {
+    li.classList.add('other');
+    }
+      if (m.image) {
+      li.innerHTML = `
+      <div class="name">${DOMPurify.sanitize(m.id)}</div>
+      <img src="${m.image}" class="chat-img">
+      <div class="time">${DOMPurify.sanitize(m.time)}</div>
+      `;
+      } else {
+      li.innerHTML = `
+      <div class="name">${DOMPurify.sanitize(m.id)}</div>
+      <div class="text">${DOMPurify.sanitize(m.text)}</div>
+      <div class="time">${DOMPurify.sanitize(m.time)}</div>
+      `; }
+
+      ul.appendChild(li);
+    });
+    const box = document.getElementById('chat-box');
+
+    if (autoScrollEnabled && wasAtBottom) {
+      box.scrollTop = box.scrollHeight;
+    }
+  }
+
+  async function send() {
+    const input = document.getElementById('msg');
+
+    if (!input.value.trim()) return;
+
+    await fetch('/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify({ text: input.value })
+    });
+
+    input.value = '';
+    loadChat();
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+  const box = document.getElementById('chat-box');
+
+  box.addEventListener('scroll', () => {
+
+    if (isProgrammaticScroll) return;
+
+    const atBottom = isAtBottom();
+
+    if (!atBottom && autoScrollEnabled) {
+      const ok = confirm("위로 스크롤 중입니다. 자동 스크롤 끌까요?");
+
+      if (ok) {
+        autoScrollEnabled = false;
+      } else {
+        isProgrammaticScroll = true;
+        box.scrollTop = box.scrollHeight;
+
+        setTimeout(() => {
+          isProgrammaticScroll = false;
+        }, 50);
+      }
+    }
+
+    if (atBottom) {
+      autoScrollEnabled = true;
+    }
+  });
+});
+
+async function sendImage() {
+  const fileInput = document.getElementById('img');
+
+  if (!fileInput.files[0]) return;
+
+  const formData = new FormData();
+  formData.append('image', fileInput.files[0]);
+
+  await fetch('/upload', {
+    method: 'POST',
+    credentials: 'same-origin',
+    body: formData
+  });
+
+  fileInput.value = '';
+  loadChat();
+}
+
+  loadUser();
+  loadChat();
+
+  setInterval(loadChat, 1000);
+</script>
+
+</body>
+
+<style>
+
+  #chat-box {
+    width: 300px;
+    height: 300px;
+    border: 1px solid black;
+    overflow-y: scroll;
+    margin-top: 20px;
+  }
+
+  #chat li {
+    list-style: none;
+    padding: 5px;
+  }
+
+  #chat {
+  padding: 0;
+}
+
+.msg {
+  max-width: 70%;
+  margin: 5px;
+  padding: 10px;
+  border-radius: 15px;
+  list-style: none;
+  word-break: break-word;
+}
+
+.me {
+  background: #dcf8c6;
+  margin-left: auto;
+  text-align: right;
+}
+
+.other {
+  background: #fff;
+  border: 1px solid #ddd;
+  margin-right: auto;
+}
+
+.name {
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 2px;
+}
+
+.text {
+  font-size: 14px;
+}
+
+.time {
+  font-size: 10px;
+  color: #aaa;
+  margin-top: 5px;
+  text-align: right;
+}
+
+.me .time {
+  text-align: right;
+}
+
+.other .time {
+  text-align: left;
+}
+
+.chat-img {
+  max-width: 150px;
+  border-radius: 10px;
+}
+</style>
+
+</html>

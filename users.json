@@ -1,0 +1,20 @@
+{
+  "users": [
+    {
+      "id": "isu",
+      "password": "$2b$10$FFoKamsePsdYjxdrE1V1NuwN0EGhbSK1GUQ556UF5G4mKUsYC5zKK"
+    },
+    {
+      "id": "admin",
+      "password": "$2b$10$O1E/i4mxtp.yW2twPaZxv.CWdT.wtpYxeMZFi9uYImS0nGuUAaAZG"
+    },
+    {
+      "id": "test0001",
+      "password": "$2b$10$w2vhuB2f8.PdC/ROpUaiIedA/RQGEkQP0qHNL7WJdw8sfRvOOH3Jq"
+    },
+    {
+      "id": "a",
+      "password": "$2b$10$0BB5.ZUy/.Sk7bpn9CimJuo7Xx7/jAhwcz2gZSQb5zXOjB4Hp/Zf."
+    }
+  ]
+}
