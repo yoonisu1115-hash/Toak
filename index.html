@@ -16,12 +16,12 @@
     <ul id="chat"></ul>
   </div>
 
-  <input id="msg" placeholder="메시지 입력">
-  <button onclick="send()">전송</button><input type="file" id="img">
-<button onclick="sendImage()">이미지</button><br>
-  <button onclick="login()">로그인</button>
-  <button onclick="logout()">로그아웃</button>
-  <button onclick="join()">회원가입</button>
+  <input id="msg" placeholder="메시지 입력"  class="input">
+  <button onclick="send()" class="enter">전송</button>
+  <br>
+  <button onclick="login()" class="button">로그인</button>
+  <button onclick="logout()" class="button">로그아웃</button>
+  <button onclick="join()" class="button">회원가입</button>
 
 <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
 <script>
@@ -247,6 +247,32 @@ async function sendImage() {
 .chat-img {
   max-width: 150px;
   border-radius: 10px;
+}
+
+.button {
+  border-radius: 10px;
+  border: #ffffff00;
+  color: #000000;
+  padding: 5px;
+  width: 75px;
+}
+
+.input {
+  border-radius: 10px;
+  color: #000000;
+  padding: 5px;
+  width: 150px;
+
+}
+
+.enter {
+  max-width: 200px;
+  border-radius: 10px;
+  border: #ffffff00;
+  background-color: #1453ff;
+  color: #fff;
+  padding: 5px;
+  width: 100px;
 }
 </style>
 
