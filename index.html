@@ -84,18 +84,19 @@
     } else {
     li.classList.add('other');
     }
-      if (m.image) {
-      li.innerHTML = `
-      <div class="name">${DOMPurify.sanitize(m.id)}</div>
-      <img src="${m.image}" class="chat-img">
-      <div class="time">${DOMPurify.sanitize(m.time)}</div>
-      `;
-      } else {
-      li.innerHTML = `
-      <div class="name">${DOMPurify.sanitize(m.id)}</div>
-      <div class="text">${DOMPurify.sanitize(m.text)}</div>
-      <div class="time">${DOMPurify.sanitize(m.time)}</div>
-      `; }
+      if (isImage(m.text)) {
+  li.innerHTML = `
+    <div class="name">${DOMPurify.sanitize(m.id)}</div>
+    <img src="${m.text}" class="chat-img">
+    <div class="time">${DOMPurify.sanitize(m.time)}</div>
+  `;
+} else {
+  li.innerHTML = `
+    <div class="name">${DOMPurify.sanitize(m.id)}</div>
+    <div class="text">${DOMPurify.sanitize(m.text)}</div>
+    <div class="time">${DOMPurify.sanitize(m.time)}</div>
+  `;
+}
 
       ul.appendChild(li);
     });
