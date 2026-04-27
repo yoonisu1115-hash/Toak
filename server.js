@@ -143,20 +143,27 @@ app.get('/chat', (req, res) => {
 app.post('/chat', (req, res) => {
   if (!req.session.user) return res.send("로그인 필요");
 
-  const data = fs.readFileSync('chat.json', 'utf-8');
-  const json = JSON.parse(data);
+  let json;
+
+  try {
+    const data = fs.readFileSync('chat.json', 'utf-8');
+    json = JSON.parse(data);
+  } catch (e) {
+    json = { messages: [] };
+  }
+
+  if (!json.messages) json.messages = [];
 
   json.messages.push({
     id: req.session.user,
     text: req.body.text,
-    time: new Date().toLocaleTimeString()
+    time: new Date().toISOString() // 🔥 이것 추천
   });
 
   fs.writeFileSync('chat.json', JSON.stringify(json, null, 2));
 
   res.send("ok");
 });
-
 
 // ================= 이미지 업로드 =================
 
