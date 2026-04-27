@@ -24,7 +24,9 @@ app.use(session({
   secret: 'secret-key',
   resave: false,
   saveUninitialized: false,
-  store: new FileStore()
+  cookie: {
+    httpOnly: true
+  }
 }));
 app.use('/uploads', express.static('uploads'));
 
