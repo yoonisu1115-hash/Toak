@@ -4,8 +4,6 @@ const bcrypt = require('bcrypt');
 const fs = require('fs');
 const session = require('express-session');
 const multer = require('multer');
-const path = require('path');
-const filePath = path.join(__dirname, 'chat.json');
 
 // 🔥 uploads 폴더 자동 생성
 if (!fs.existsSync('uploads')) {
@@ -145,27 +143,20 @@ app.get('/chat', (req, res) => {
 app.post('/chat', (req, res) => {
   if (!req.session.user) return res.send("로그인 필요");
 
-  let json;
-
-  try {
-    const data = fs.readFileSync(filePath, 'utf-8');
-    json = JSON.parse(data);
-  } catch (e) {
-    json = { messages: [] };
-  }
-
-  if (!json.messages) json.messages = [];
+  const data = fs.readFileSync('chat.json', 'utf-8');
+  const json = JSON.parse(data);
 
   json.messages.push({
     id: req.session.user,
     text: req.body.text,
-    time: new Date().toISOString() // 🔥 이것 추천
+    time: new Date().toLocaleTimeString()
   });
 
-  fs.writeFileSync(filePath, JSON.stringify(json, null, 2));
+  fs.writeFileSync('chat.json', JSON.stringify(json, null, 2));
 
   res.send("ok");
 });
+
 
 // ================= 이미지 업로드 =================
 
