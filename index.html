@@ -119,7 +119,7 @@ li.classList.add(isMe ? 'me' : 'other');
   } else if (isImage(m.text)) {
   const url = fixUrl(m.text);
 
-  if (!url.startsWith('http')) return; // 🔥 안전장치
+  if (!url.startsWith('http')) return; // 🔥 안전장치 
 
   li.innerHTML = `
     <div class="name">${DOMPurify.sanitize(m.id)}</div>
