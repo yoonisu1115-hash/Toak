@@ -42,6 +42,9 @@
     function join() {
   location.href = '/join';
   }
+  function isImage(url) {
+  return url.match(/\.(jpg|jpeg|png|gif|webp)$/i);
+  }   
 
   async function loadUser() {
     const res = await fetch('/me', {
